@@ -1,0 +1,34 @@
+name: File Input and String Append Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'Please upload the file to process'
+        required: true
+        type: string  # This is the file name; the actual upload will be handled manually.
+      message:
+        description: 'Enter the message to append at the end of the file'
+        required: true
+        type: string
+
+jobs:
+  process-file:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Create a working directory
+        run: mkdir -p ./working-directory
+
+      # Since the file upload is manual, we assume the file will be in the GitHub runner at runtime
+
+      - name: Read input file
+        id: read_file
+        run: |
+          cat ${{ github.event.inputs.file }} > ./working-directory/input.txt
+
+      - name: Append message to the file
+        run: echo "${{ github.event.inputs.message }}" >> ./working-directory/input.txt
+
+      - name: Display updated file
+        run: cat ./working-directory/input.txt
